@@ -5,15 +5,10 @@ import os
 # ASCII Art for Game Start and End
 def print_ascii_art():
     os.system('cls' if os.name == 'nt' else 'clear')  # Clear the terminal
-    print("  _____                  _____                  _____                  _____")
-    print(" / ____|                / ____|                |  __ \                |  __ \")
-    print("| (___  __ _ _ __ ___  | (___  __ _ _ __ ___  __| |__) |  __ _ _ __ ___  __| |__) |")
-    print("|___ \ / _` | '_ ` _ \ |___ \ / _` | '_ ` _ \ / ___/ __/ _` | '_ ` _ \ / ___/ __/ _` |")
-    print("|___| | (_| | | | | | | |___| | (_| | | | | | | | | (__| (_| | | | | | | | (__| (_| |")
-    print("     \____\__,_|_| |_|_|      \____\__,_|_| |_|_| |_|\___|\__,_|_| |_|_| |_|\___|\__,_|")
-    print("                                                                                      ")
-    print("  Tic Tac Toe Game  ")
-    print("_____________________")
+    print("=====================================")
+    print("             Bonjourno!              ")
+    print("=====================================\n")
+    print("Welcome to the Ultimate Tic Tac Toe!\n")
 
 # Customizable Player Names
 def get_player_names():
@@ -37,17 +32,23 @@ def get_player_for_single_player_mode():
 # Function to Draw the Board
 def draw_board(board):
     os.system('cls' if os.name == 'nt' else 'clear')  # Clear the terminal
-    print("  {} | {} | {}".format(board[0], board[1], board[2]))
+    print("\n")
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
     print("---+---+---")
-    print("  {} | {} | {}".format(board[3], board[4], board[5]))
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
     print("---+---+---")
-    print("  {} | {} | {}".format(board[6], board[7], board[8]))
+    print(f" {board[6]} | {board[7]} | {board[8]} ")
+    print("\n")
 
 # Function to Check for Win Conditions
 def check_win(board):
-    win_conditions = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]
+    win_conditions = [
+        (0, 1, 2), (3, 4, 5), (6, 7, 8),
+        (0, 3, 6), (1, 4, 7), (2, 5, 8),
+        (0, 4, 8), (2, 4, 6)
+    ]
     for condition in win_conditions:
-        if board[condition[0]] == board[condition[1]] == board[condition[2]]!= " ":
+        if board[condition[0]] == board[condition[1]] == board[condition[2]] != " ":
             return True
     return False
 
@@ -58,11 +59,16 @@ def check_draw(board):
 # Function to Handle Player Move
 def handle_player_move(board, player_name):
     move = input(f"{player_name}, enter your move (1-9): ")
-    if board[int(move) - 1] == " ":
-        board[int(move) - 1] = "X" if player_name == "Player 1" else "O"
-        return True
+    if move in [str(i) for i in range(1, 10)]:
+        index = int(move) - 1
+        if board[index] == " ":
+            board[index] = "X" if "Player 1" in player_name else "O"
+            return True
+        else:
+            print("That spot is already taken. Try again.")
+            return handle_player_move(board, player_name)
     else:
-        print("Invalid move, try again.")
+        print("Invalid input. Please enter a number from 1 to 9.")
         return handle_player_move(board, player_name)
 
 # Function to Handle AI Move
@@ -70,34 +76,27 @@ def handle_ai_move(board):
     empty_squares = [i for i, x in enumerate(board) if x == " "]
     move = random.choice(empty_squares)
     board[move] = "O"
+    print("AI is making a move...")
+    time.sleep(1)
     return True
 
 # Function to Play 2-Player Mode
 def play_2_player_mode():
     player1_name, player2_name = get_players_for_2_player_mode()
     board = [" "] * 9
+    current_player = player1_name
     while True:
         draw_board(board)
-        if not handle_player_move(board, player1_name):
-            continue
+        handle_player_move(board, current_player)
         if check_win(board):
             draw_board(board)
-            print(f"Player 1 ({player1_name}) wins!")
+            print(f"🎉 {current_player} wins! 🎉\n")
             break
         if check_draw(board):
             draw_board(board)
-            print("It's a draw!")
+            print("It's a draw! 🤝\n")
             break
-        if not handle_player_move(board, player2_name):
-            continue
-        if check_win(board):
-            draw_board(board)
-            print(f"Player 2 ({player2_name}) wins!")
-            break
-        if check_draw(board):
-            draw_board(board)
-            print("It's a draw!")
-            break
+        current_player = player2_name if current_player == player1_name else player1_name
 
 # Function to Play Single-Player Mode
 def play_single_player_mode():
@@ -105,59 +104,31 @@ def play_single_player_mode():
     board = [" "] * 9
     while True:
         draw_board(board)
-        if not handle_player_move(board, player_name):
-            continue
+        handle_player_move(board, player_name)
         if check_win(board):
             draw_board(board)
-            print(f"Player wins!")
+            print(f"🏆 {player_name} wins! Congratulations! 🏆\n")
             break
         if check_draw(board):
             draw_board(board)
-            print("It's a draw!")
+            print("It's a draw! 🤝\n")
             break
-        if not handle_ai_move(board):
-            continue
+        handle_ai_move(board)
         if check_win(board):
             draw_board(board)
-            print("AI wins!")
+            print("🤖 AI wins! Better luck next time! 🤖\n")
             break
         if check_draw(board):
             draw_board(board)
-            print("It's a draw!")
-            break
-
-# Function to Play 2-Player Mode with Sound Effects
-def play_2_player_mode_with_sound():
-    player1_name, player2_name = get_players_for_2_player_mode()
-    board = [" "] * 9
-    while True:
-        draw_board(board)
-        if not handle_player_move(board, player1_name):
-            continue
-        if check_win(board):
-            draw_board(board)
-            print(f"\a\a Player 1 ({player1_name}) wins!\a\a")
-            break
-        if check_draw(board):
-            draw_board(board)
-            print("\a\a It's a draw!\a\a")
-            break
-        if not handle_player_move(board, player2_name):
-            continue
-        if check_win(board):
-            draw_board(board)
-            print(f"\a\a Player 2 ({player2_name}) wins!\a\a")
-            break
-        if check_draw(board):
-            draw_board(board)
-            print("\a\a It's a draw!\a\a")
+            print("It's a draw! 🤝\n")
             break
 
 # Main Game Function
 def main_game():
     print_ascii_art()
     while True:
-        print("\n1. 2-Player Mode")
+        print("Choose Mode:")
+        print("1. 2-Player Mode")
         print("2. Single-Player Mode")
         print("3. Quit")
         choice = input("Enter your choice: ")
@@ -166,23 +137,20 @@ def main_game():
         elif choice == "2":
             play_single_player_mode()
         elif choice == "3":
-            print("Thanks for playing!")
+            print("Thanks for playing! 🎉 Come back soon!")
             break
         else:
             print("Invalid choice, try again.")
 
-# Easter Egg: Type 'joke' to see a funny joke
+# Easter Egg: Joke feature
 def easter_egg():
     while True:
-        joke = input("Want to hear a joke? Type 'joke' to hear one, or just press Enter to continue: ")
+        joke = input("Want to hear a joke? Type 'joke' or press Enter to skip: ")
         if joke.lower() == "joke":
-            print("Why couldn't the bicycle stand up by itself?")
-            time.sleep(1)
-            print("Because it was two-tired!")
-            print("Ha ha, get it? Two-tired? Like a bicycle tire? Ahh, never mind...")
+            print("Why did the scarecrow win an award? Because he was outstanding in his field! 😄")
         else:
             break
 
-# Main Program Loop
+# Run the game
 if __name__ == "__main__":
     main_game()
