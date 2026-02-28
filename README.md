@@ -75,7 +75,7 @@ def handle_player_move(board, player_name):
 def handle_ai_move(board):
     empty_squares = [i for i, x in enumerate(board) if x == " "]
     move = random.choice(empty_squares)
-    board[move] = "O"
+    board[move] = "X"
     print("AI is making a move...")
     time.sleep(1)
     return True
