@@ -21,13 +21,16 @@ def get_players_for_2_player_mode():
     player1_name, player2_name = get_player_names()
     print(f"Player 1: {player1_name} (X)")
     print(f"Player 2: {player2_name} (O)")
-    return player1_name, player2_name
+    return {
+        'player1': {'name': player1_name, 'marker': 'X'},
+        'player2': {'name': player2_name, 'marker': 'O'}
+    }
 
-# Get Player Names for Single-Player Mode
+# Get Player Name for Single Player
 def get_player_for_single_player_mode():
     player_name = input("Enter Player Name: ")
     print(f"Player: {player_name} (X)")
-    return player_name
+    return {'name': player_name, 'marker': 'X'}
 
 # Function to Draw the Board
 def draw_board(board):
@@ -56,64 +59,65 @@ def check_win(board):
 def check_draw(board):
     return " " not in board
 
-# Function to Handle Player Move
-def handle_player_move(board, player_name):
-    move = input(f"{player_name}, enter your move (1-9): ")
+# Handle Player Move with marker parameter
+def handle_player_move(board, player):
+    move = input(f"{player['name']} ({player['marker']}), enter your move (1-9): ")
     if move in [str(i) for i in range(1, 10)]:
         index = int(move) - 1
         if board[index] == " ":
-            board[index] = "X" if "Player 1" else "O"
+            board[index] = player['marker']
             return True
         else:
             print("That spot is already taken. Try again.")
-            return handle_player_move(board, player_name)
+            return handle_player_move(board, player)
     else:
         print("Invalid input. Please enter a number from 1 to 9.")
-        return handle_player_move(board, player_name)
+        return handle_player_move(board, player)
 
-# Function to Handle AI Move
-def handle_ai_move(board):
+# Handle AI Move with marker parameter
+def handle_ai_move(board, marker):
     empty_squares = [i for i, x in enumerate(board) if x == " "]
     move = random.choice(empty_squares)
-    board[move] = "X"
+    board[move] = marker
     print("Tabby is making a move...")
     time.sleep(1)
     return True
 
 # Function to Play 2-Player Mode
 def play_2_player_mode():
-    player1_name, player2_name = get_players_for_2_player_mode()
+    players = get_players_for_2_player_mode()
     board = [" "] * 9
-    current_player = player1_name
+    current_player = players['player1']
     while True:
         draw_board(board)
         handle_player_move(board, current_player)
         if check_win(board):
             draw_board(board)
-            print(f" {current_player} wins and gets all the honour! \n")
+            print(f" {current_player['name']} wins and gets all the honour! \n")
             break
         if check_draw(board):
             draw_board(board)
             print("It's a draw! WHAT A LETDOWN \n")
             break
-        current_player = player2_name if current_player == player1_name else player1_name
+        # Switch players
+        current_player = players['player2'] if current_player == players['player1'] else players['player1']
 
 # Function to Play Single-Player Mode
 def play_single_player_mode():
-    player_name = get_player_for_single_player_mode()
+    player = get_player_for_single_player_mode()
     board = [" "] * 9
     while True:
         draw_board(board)
-        handle_player_move(board, player_name)
+        handle_player_move(board, player)
         if check_win(board):
             draw_board(board)
-            print(f" {player_name} wins! Congratulations! \n")
+            print(f" {player['name']} wins! Congratulations for uhh beating a cat... i hope it inflates your ego MONSTER! \n")
             break
         if check_draw(board):
             draw_board(board)
             print("It's a draw! \n")
             break
-        handle_ai_move(board)
+        handle_ai_move(board, 'O')  # AI marker is 'O'
         if check_win(board):
             draw_board(board)
             print("Tabby wins! YOU GOT OUSMARTED BY A CAT LLLLLL!!! Better luck next time bastard! \n")
@@ -137,7 +141,7 @@ def main_game():
         elif choice == "2":
             play_single_player_mode()
         elif choice == "3":
-            print("Thanks for playing! Come back soon!")
+            print("So soon? Lazy Pig... Thanks for playing! Come back soon!")
             break
         else:
             print("Invalid choice, try again.")
