@@ -124,7 +124,7 @@ def play_single_player_mode():
             break
         if check_draw(board):
             draw_board(board)
-            print("It's a draw! DISSAPOINTING \n")
+            print("It's a draw!DISSAPOINTING \n")
             break
 
 # Main Game Function
