@@ -62,7 +62,7 @@ def handle_player_move(board, player_name):
     if move in [str(i) for i in range(1, 10)]:
         index = int(move) - 1
         if board[index] == " ":
-            board[index] = "X" if "Player 1" in player_name else "O"
+            board[index] = "X" if "Player 1" else "O"
             return True
         else:
             print("That spot is already taken. Try again.")
@@ -76,7 +76,7 @@ def handle_ai_move(board):
     empty_squares = [i for i, x in enumerate(board) if x == " "]
     move = random.choice(empty_squares)
     board[move] = "X"
-    print("AI is making a move...")
+    print("Tabby is making a move...")
     time.sleep(1)
     return True
 
@@ -90,7 +90,7 @@ def play_2_player_mode():
         handle_player_move(board, current_player)
         if check_win(board):
             draw_board(board)
-            print(f" {current_player} wins! \n")
+            print(f" {current_player} wins and gets all the honour! \n")
             break
         if check_draw(board):
             draw_board(board)
@@ -116,7 +116,7 @@ def play_single_player_mode():
         handle_ai_move(board)
         if check_win(board):
             draw_board(board)
-            print("I win! Better luck next time bastard! \n")
+            print("Tabby wins! YOU GOT OUSMARTED BY A CAT LLLLLL!!! Better luck next time bastard! \n")
             break
         if check_draw(board):
             draw_board(board)
